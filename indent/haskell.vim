@@ -239,11 +239,19 @@ function! GetHaskellIndent()
     endif
   endif
 
-  " where
+  " f x = y
+  "   where
+  "   >>foo
+  "
+  if l:prevline =~ '\C^\s*\<where\>\s*$'
+    return indent(v:lnum - 1) + get(g:, 'haskell_indent_after_bare_where', shiftwidth())
+  endif
+
+  " instance Show MyData where
   " >>foo
   "
-  if l:prevline =~ '\C\<where\>\s*$'
-    return indent(v:lnum - 1) + get(g:, 'haskell_indent_after_bare_where', shiftwidth())
+  if l:prevline =~ '\C^.*\S.*\<where\>\s*$'
+    return indent(v:lnum - 1) + get(g:, 'haskell_indent_after_trailing_where', &shiftwidth)
   endif
 
   " do
